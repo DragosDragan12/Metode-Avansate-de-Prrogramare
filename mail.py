@@ -7,7 +7,7 @@ from hashlib import new
 import smtplib
 sender='data_scraping@coneasorin.ro'
 subject='Pretul a scazut la:'
-to_addr_list = ['caldaredenis@yahoo.com']
+to_addr_list = ['dragandragos73@gmail.com']
 cc_addr_list = ['']
 def sendemail(sender,message, subject,to_addr_list, cc_addr_list=[]):
     try:
