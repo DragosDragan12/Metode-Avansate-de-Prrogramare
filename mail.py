@@ -1,57 +1,46 @@
-from re import T
-import pyautogui
-import time 
-import keyboard
+import string
+import requests
+from bs4 import BeautifulSoup
+import smtplib
+from apscheduler.schedulers.blocking import BlockingScheduler
+from hashlib import new
+import smtplib
+sender='data_scraping@coneasorin.ro'
+subject='Pretul a scazut la:'
+to_addr_list = ['caldaredenis@yahoo.com']
+cc_addr_list = ['']
+def sendemail(sender,message, subject,to_addr_list, cc_addr_list=[]):
+    try:
+        smtpserver='mail.x-it.ro:26'
+        header  = 'From: %s\n' % sender
+        header += 'To: %s\n' % ','.join(to_addr_list)
+        header += 'Cc: %s\n' % ','.join(cc_addr_list)
+        header += 'Subject: %s\n\n' % subject
+        message = header + message
  
-def cautare_google():
-    time.sleep(5)
-    if pyautogui.locateAllOnScreen(r'C:\Users\Dragos\Desktop\metode avansate de programare\123.png',confidence=0.7) !=None:
-        camp_google = pyautogui.locateOnScreen(r'C:\Users\Dragos\Desktop\metode avansate de programare\123.png',confidence=0.7) 
-        pyautogui.click(camp_google)
-        time.sleep(1)
-        pyautogui.write('https://www.youtube.com')
-        pyautogui.press('enter')
+        server = smtplib.SMTP(smtpserver)
+        server.starttls()
+        server.login(sender,"stiinte217_2022")
+        problems = server.sendmail(sender, to_addr_list, message)
+        server.quit()
+        return True
+    except:
+        return False
+
+def data_scraping() :
+    req=requests.get("https://www.emag.ro/telefon-mobil-apple-iphone-14-pro-max-128gb-5g-deep-purple-mq9t3rx-a/pd/DXDY4LMBM/?cmpid=99160&gclid=CjwKCAjw7p6aBhBiEiwA83fGutQEzd8jTFRrgGNgq-64rJSekVI_-HBUv2ljRnybUWvX7Ny_Rzh68hoClScQAvD_BwE")
+    soup=BeautifulSoup(req.text,"html.parser")
+    price=soup.find('p', attrs={'class': 'product-new-price'}).text
+    new_price=price[0:5]
+    new_price=new_price.replace(".","")
+    new_price=int(new_price)
+    pret_referinta = 7069
+    if(new_price<pret_referinta):
+        sendemail( sender, "dada" +str(new_price), subject, to_addr_list, cc_addr_list=[])
+        print("pretul a scazut")
     else:
-        print("Imaginea nu este pe ecran")
-            
-cautare_google()
- 
-def cautare_yt():
-    time.sleep(5)
-    if pyautogui.locateAllOnScreen(r'C:\Users\Dragos\Desktop\metode avansate de programare\12.png',confidence=0.7) !=None:
-        camp_yt = pyautogui.locateOnScreen(r'C:\Users\Dragos\Desktop\metode avansate de programare\12.png',confidence=0.7) 
-        pyautogui.click(camp_yt)
-        time.sleep(1)
-        pyautogui.write('Valydex')
-        pyautogui.press('enter')
-    else:
-        print("Imaginea nu este pe ecran")
-            
-cautare_yt()
- 
-def click_canal():
-    time.sleep(3)
-    if pyautogui.locateAllOnScreen(r'C:\Users\Dragos\Desktop\metode avansate de programare\valydex.png',confidence=0.7) !=None:
-        camp_canal = pyautogui.locateOnScreen(r'C:\Users\Dragos\Desktop\metode avansate de programare\valydex.png',confidence=0.7) 
-        pyautogui.click(camp_canal)
+        print("pretul nu a scazut")
 
 
-    else:
-
-
-        print("Imaginea nu este pe ecran")
- 
-
-    click_canal()
- 
-def abonare_canal():
-    time.sleep(3)
-    if pyautogui.locateAllOnScreen(r'C:\Users\Dragos\Desktop\metode avansate de programare\aboneazate.jpg',confidence=0.7) !=None:
-        camp_abonare = pyautogui.locateOnScreen(r'C:\Users\Dragos\Desktop\metode avansate de programare\aboneazate.jpg',confidence=0.7) 
-        pyautogui.click(camp_abonare)
-        time.sleep(1)
-    else:
-        print("Imaginea nu este pe ecran")
-        
-abonare_canal()
-
+sendemail(sender, "plm", subject, to_addr_list, cc_addr_list)
+data_scraping()
